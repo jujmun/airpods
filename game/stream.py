@@ -19,18 +19,26 @@ class Sample:
     ay: float
     az: float
     t: float
+    rx: float = 0.0
+    ry: float = 0.0
+    rz: float = 0.0
 
 
 def parse(payload: bytes, t: float | None = None) -> Sample | None:
-    """Parse one `yaw,pitch,roll,ax,ay,az` datagram. Return None if it is malformed."""
+    """Parse one `yaw,pitch,roll,ax,ay,az[,rx,ry,rz]` datagram. Return None if it is malformed.
+
+    Rotation rate is optional so older bridges that send six fields still work.
+    """
     try:
         parts = payload.decode("utf-8").strip().split(",")
-        if len(parts) != 6:
+        if len(parts) not in (6, 9):
             return None
-        yaw, pitch, roll, ax, ay, az = (float(part) for part in parts)
+        values = [float(part) for part in parts]
     except (UnicodeDecodeError, ValueError):
         return None
-    return Sample(yaw, pitch, roll, ax, ay, az, time.monotonic() if t is None else t)
+    yaw, pitch, roll, ax, ay, az = values[:6]
+    rx, ry, rz = values[6:] if len(values) == 9 else (0.0, 0.0, 0.0)
+    return Sample(yaw, pitch, roll, ax, ay, az, time.monotonic() if t is None else t, rx, ry, rz)
 
 
 class MotionStream:

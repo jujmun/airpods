@@ -29,7 +29,7 @@ def main() -> None:
     try:
         with path.open("w", newline="") as handle:
             writer = csv.writer(handle)
-            writer.writerow(["t", "yaw", "pitch", "roll", "ax", "ay", "az", "label"])
+            writer.writerow(["t", "yaw", "pitch", "roll", "ax", "ay", "az", "rx", "ry", "rz", "label"])
             while True:
                 samples = stream.drain()
                 if not samples:
@@ -50,6 +50,9 @@ def main() -> None:
                             f"{sample.ax:.6f}",
                             f"{sample.ay:.6f}",
                             f"{sample.az:.6f}",
+                            f"{sample.rx:.6f}",
+                            f"{sample.ry:.6f}",
+                            f"{sample.rz:.6f}",
                             args.label,
                         ]
                     )

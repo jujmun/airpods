@@ -2,3 +2,4 @@
 airpods.app/
 data/
 .DS_Store
+__pycache__/

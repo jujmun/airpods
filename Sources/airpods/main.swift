@@ -89,8 +89,8 @@ private func stopLaunchedApp(_ signal: Int32) {
     _exit(signal == SIGINT ? 130 : 143)
 }
 
-/// Streams AirPods attitude and user acceleration as
-/// `yaw,pitch,roll,accX,accY,accZ` over UDP.
+/// Streams AirPods attitude, user acceleration and rotation rate as
+/// `yaw,pitch,roll,accX,accY,accZ,rotX,rotY,rotZ` over UDP.
 final class Streamer: NSObject, CMHeadphoneMotionManagerDelegate {
     private let manager = CMHeadphoneMotionManager()
     private let connection: NWConnection
@@ -161,7 +161,7 @@ final class Streamer: NSObject, CMHeadphoneMotionManagerDelegate {
             let attitude = motion.attitude
             let acceleration = motion.userAcceleration
             let rotation = motion.rotationRate
-            let message = "\(attitude.yaw),\(attitude.pitch),\(attitude.roll),\(acceleration.x),\(acceleration.y),\(acceleration.z)"
+            let message = "\(attitude.yaw),\(attitude.pitch),\(attitude.roll),\(acceleration.x),\(acceleration.y),\(acceleration.z),\(rotation.x),\(rotation.y),\(rotation.z)"
             self.connection.send(content: message.data(using: .utf8), completion: .idempotent)
             self.onSample?(
                 motion.timestamp,
